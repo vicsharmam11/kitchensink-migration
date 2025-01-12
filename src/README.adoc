@@ -1,0 +1,167 @@
+# Kitchensink Migration Project
+
+This project demonstrates the migration of the legacy JBoss Kitchensink application to a modern platform using **Spring Boot** and **MongoDB**, with JWT-based security implemented for authentication and authorization.
+
+## Features
+- **Spring Boot** as the application framework.
+- **MongoDB** as the database.
+- **JWT-based authentication** for secure API access.
+- CRUD operations for members.
+- Comprehensive validation and exception handling.
+- Role-based access control for `ADMIN` and `USER` roles.
+- Unit tests using **JUnit 5** and **Mockito**.
+- Simple frontend UI for interacting with APIs.
+
+---
+
+## Prerequisites
+- Java 21 installed.
+- MongoDB instance running locally or remotely.
+- Maven for dependency management.
+- A tool like Postman or a browser to interact with APIs.
+
+---
+
+## Getting Started
+
+### 1. Clone the Repository
+```bash
+$ git clone <repository-url>
+$ cd kitchensink
+```
+
+### 2. Setup MongoDB
+Ensure MongoDB is running locally or remotely. Update the connection string in `application.properties`:
+```properties
+spring.application.name=kitchensink
+spring.data.mongodb.uri=mongodb://localhost:27017/admin
+```
+
+### 3. Build the Application
+```bash
+$ mvn clean install
+```
+
+### 4. Run the Application
+```bash
+$ mvn spring-boot:run
+```
+The application will start on `http://localhost:8080`.
+
+---
+
+## Endpoints
+
+### Authentication
+- **POST** `/api/auth/login`
+- Request Body:
+```json
+{
+"username": "admin",
+"password": "password"
+}
+```
+- Response:
+```json
+{
+"Authorization": "bearer <JWT_TOKEN>"
+}
+```
+
+### Member APIs (Requires JWT in `Authorization` Header)
+
+#### Create Member
+- **POST** `/api/members`
+- Headers:
+```
+Authorization: bearer <JWT_TOKEN>
+```
+- Request Body:
+```json
+{
+"name": "John Doe",
+"email": "john.doe@example.com",
+"phone": "1234567890"
+}
+```
+- Response:
+```json
+{
+"id": "<member_id>",
+"name": "John Doe",
+"email": "john.doe@example.com",
+"phone": "1234567890"
+}
+```
+
+#### Get Member by ID
+- **GET** `/api/members/{id}`
+- Headers:
+```
+Authorization: bearer <JWT_TOKEN>
+```
+- Response:
+```json
+{
+"id": "<member_id>",
+"name": "John Doe",
+"email": "john.doe@example.com",
+"phone": "1234567890"
+}
+```
+
+#### Update Member
+- **PUT** `/api/members/{id}`
+- Headers:
+```
+Authorization: bearer <JWT_TOKEN>
+```
+- Request Body:
+```json
+{
+"name": "Jane Doe",
+"email": "jane.doe@example.com",
+"phone": "0987654321"
+}
+```
+- Response:
+```json
+{
+"id": "<member_id>",
+"name": "Jane Doe",
+"email": "jane.doe@example.com",
+"phone": "0987654321"
+}
+```
+
+#### Delete Member
+- **DELETE** `/api/members/{id}`
+- Headers:
+```
+Authorization: bearer <JWT_TOKEN>
+```
+- Response:
+```json
+{
+"message": "Member deleted successfully."
+}
+```
+
+---
+
+## Running Unit Tests
+Unit tests are implemented using **JUnit 5** and **Mockito**. Run the tests with the following command:
+```bash
+$ mvn test
+```
+
+---
+
+## Frontend UI
+A simple HTML page is included to interact with the APIs. Open the `index.html` file in your browser and:
+1. Log in to get a JWT token.
+2. Use the token to interact with secured APIs (e.g., create, update, delete members).
+
+---
+
+
