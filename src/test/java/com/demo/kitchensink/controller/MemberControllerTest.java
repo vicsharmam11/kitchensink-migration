@@ -11,6 +11,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -90,6 +92,21 @@ class MemberControllerTest {
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         verify(memberService, times(1)).getMemberById("1");
+    }
+
+    @Test
+    void getAllMembers() {
+        // Arrange
+        List<Member> memberList=new ArrayList<>();
+        memberList.add(validMember);
+        when(memberService.getAllMembers()).thenReturn(memberList);
+
+        // Act
+        ResponseEntity<List<Member>> response = memberController.getAllMembers();
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(memberService, times(1)).getAllMembers();
     }
 
     @Test

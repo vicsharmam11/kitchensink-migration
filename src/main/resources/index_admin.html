@@ -115,13 +115,30 @@
                 padding: 15px;
             }
         }
-
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
 
     </style>
 </head>
 <body>
 <h1>Kitchen Sink 2.0</h1>
 <button id="logout-button" style="display:none;" class="button">Logout</button>
+<!-- Create Member -->
+<div class="form-section">
+    <h2>Create Member</h2>
+    <label for="create-name">Name</label>
+    <input type="text" id="create-name" placeholder="Enter member name">
+    <label for="create-email">Email</label>
+    <input type="email" id="create-email" placeholder="Enter member email">
+    <label for="phone">Phone</label>
+    <input type="tel" id="phone" name="phone" placeholder="Enter phone number">
+    <button onclick="createMember()">Create Member</button>
+    <div id="create-member-response" class="response"></div>
+</div>
 
 <!-- Get Member by ID -->
 <div class="form-section">
@@ -137,6 +154,30 @@
     <h2>Get All Members</h2>
     <button onclick="getAllMembers()">Get Members</button>
     <div id="get-all-members-response" class="response"></div>
+</div>
+
+<!-- Update Member -->
+<div class="form-section">
+    <h2>Update Member</h2>
+    <label for="update-id">Member ID</label>
+    <input type="text" id="update-id" placeholder="Enter member ID">
+    <label for="update-name">Name</label>
+    <input type="text" id="update-name" placeholder="Enter new name">
+    <label for="update-email">Email</label>
+    <input type="email" id="update-email" placeholder="Enter new email">
+    <label for="phone">Phone</label>
+    <input type="tel" id="update-phone" name="phone" placeholder="Enter phone number">
+    <button onclick="updateMember()">Update Member</button>
+    <div id="update-member-response" class="response"></div>
+</div>
+
+<!-- Delete Member -->
+<div class="form-section">
+    <h2>Delete Member</h2>
+    <label for="delete-id">Member ID</label>
+    <input type="text" id="delete-id" placeholder="Enter member ID">
+    <button onclick="deleteMember()">Delete Member</button>
+    <div id="delete-member-response" class="response"></div>
 </div>
 
 <script>
@@ -182,6 +223,59 @@
             document.getElementById('login-response').textContent = error.message;
         }
     }
+
+
+
+    // Function to update a member
+    async function updateMember() {
+        const id = document.getElementById('update-id').value;
+        const name = document.getElementById('update-name').value;
+        const email = document.getElementById('update-email').value;
+        const phone = document.getElementById('update-phone').value;
+         if (!id) {
+        displayError('update-id', 'ID is required.');
+        return;
+    }
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/members/${id}`, {
+                method: 'PUT',
+                headers: getHeaders(),
+                body: JSON.stringify({ name, email, phone })
+            });
+            clearErrorMessages();
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('update-member-response').innerHTML  = renderTable(data);
+            } else {
+            const errorData = await response.json();
+            displayErrorMessagesUpdate(errorData);
+             throw new Error('Failed to update member');
+            }
+        } catch (error) {
+            document.getElementById('update-member-response').textContent = error.message;
+        }
+    }
+
+    // Function to delete a member
+    async function deleteMember() {
+        const id = document.getElementById('delete-id').value;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/members/${id}`, {
+                method: 'DELETE',
+                headers: getHeaders()
+            });
+            if (response.ok) {
+                const data = await response.text();
+                document.getElementById('delete-member-response').textContent = data || 'Member deleted successfully.';
+            } else {
+                throw new Error('Failed to delete member');
+            }
+        } catch (error) {
+            document.getElementById('delete-member-response').textContent = error.message;
+        }
+    }
+
 
 // Function to get member by ID and display response in table format
 async function getMemberById() {
@@ -326,6 +420,78 @@ function renderTable(data) {
         document.getElementById('logout-button').addEventListener('click', logout);
 
         checkToken();
+
+async function createMember() {
+    const name = document.getElementById('create-name').value;
+    const email = document.getElementById('create-email').value;
+    const phone = document.getElementById('phone').value;
+
+    // Clear previous error messages
+    clearErrorMessages();
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/members`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ name, email, phone })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('create-member-response').innerHTML = renderTable(data);
+        } else {
+            const errorData = await response.json();
+            displayErrorMessages(errorData);
+             throw new Error('Failed to create member');
+        }
+    } catch (error) {
+        document.getElementById('create-member-response').textContent = error.message;
+    }
+}
+
+function clearErrorMessages() {
+    document.querySelectorAll('.error-message').forEach(el => el.remove());
+}
+
+function displayErrorMessages(errors) {
+    if (errors.name) {
+        displayError('create-name', errors.name);
+    }
+    if (errors.email) {
+        displayError('create-email', errors.email);
+    }
+    if (errors.phone) {
+        displayError('phone', errors.phone);
+    }
+
+}
+function displayErrorMessagesUpdate(errors) {
+    if (errors.name) {
+        displayError('update-name', errors.name);
+    }
+    if (errors.email) {
+        displayError('update-email', errors.email);
+    }
+    if (errors.phone) {
+        displayError('update-phone', errors.phone);
+    }
+
+}
+
+function displayError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    if (field) {
+        const errorElement = document.createElement('div');
+        errorElement.className = 'error-message';
+        errorElement.textContent = message;
+        errorElement.style.color = 'red';
+        errorElement.style.fontSize = '14px';
+        errorElement.style.marginTop = '-10px';
+        errorElement.style.marginBottom = '10px';
+        field.insertAdjacentElement('afterend', errorElement);
+    }
+}
+
 </script>
 </body>
 </html>

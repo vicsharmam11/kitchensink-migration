@@ -1,5 +1,6 @@
 package com.demo.kitchensink.service;
 
+import com.demo.kitchensink.exception.CustomException;
 import com.demo.kitchensink.model.Member;
 import com.demo.kitchensink.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;

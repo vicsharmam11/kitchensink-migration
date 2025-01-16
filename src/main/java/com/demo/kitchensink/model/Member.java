@@ -12,15 +12,15 @@ public class Member {
     @Id
     private String id;
 
-    @NotBlank(message = "Name is mandatory")
     private String name;
 
-    @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
     private String email;
 
-    @NotBlank(message = "Phone is mandatory")
-    @Pattern(regexp = "\\d{10}", message = "Phone should be a 10-digit number")
+    @Pattern(
+            regexp = "^(|[6-9]\\d{9})$",
+            message = "Phone number must be a valid Indian mobile number (starting with 6-9)"
+    )
     private String phone;
 
     public Member(String id, String name, String email, String phone) {

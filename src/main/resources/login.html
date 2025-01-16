@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 20px;
+        padding: 20px;
+        background-color: #f2f2f2;
+    }
+    .container {
+        max-width: 400px;
+        margin: 100px auto;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+    }
+    input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        box-sizing: border-box;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+    input:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        outline: none;
+    }
+    button {
+        padding: 12px 18px;
+        background-color: #00cc66;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+    button:hover {
+        background-color: #339933;
+    }
+    .response {
+        color: red;
+        text-align: center;
+        margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Login</h1>
+  <label for="login-username">Username</label>
+  <input type="text" id="login-username" placeholder="Enter username">
+  <label for="login-password">Password</label>
+  <input type="password" id="login-password" placeholder="Enter password">
+  <button onclick="login()">Login</button>
+  <div id="login-response" class="response"></div>
+</div>
+
+<script>
+  const API_BASE_URL = 'http://localhost:8080'; // Update with your backend URL
+
+  function setToken(token) {
+      localStorage.setItem('jwtToken', token);
+  }
+
+  async function login() {
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+          const response = await fetch(`${API_BASE_URL}/auth/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username, password })
+          });
+
+          if (response.ok) {
+              const data = await response.json();
+              setToken(data.Authorization);
+              if(username=='admin')
+              window.location.href = 'index_admin.html'; // Redirect on successful login
+              else
+               window.location.href = 'index.html';
+          } else {
+              const errorData = await response.json();
+              throw new Error(errorData.message || 'Login failed');
+          }
+      } catch (error) {
+          document.getElementById('login-response').textContent = error.message;
+      }
+  }
+</script>
+</body>
+</html>
