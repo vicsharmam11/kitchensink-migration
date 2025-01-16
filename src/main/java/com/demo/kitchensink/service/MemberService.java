@@ -15,6 +15,10 @@ public class MemberService {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private SequenceGeneratorService sequenceGenerator;
+
+
     public List<Member> getUsersByName(String name) {
         return memberRepository.findByName(name);
     }
@@ -38,18 +42,16 @@ public class MemberService {
     }
 
 
-    public Optional<Member> getMemberById(String id) {
+    public Optional<Member> getMemberById(Integer id) {
         return memberRepository.findById(id);
     }
 
     public Member createMember(Member member) {
-        if (memberRepository.findByEmail(member.getEmail()).isPresent()) {
-            throw new RuntimeException("A member with this email already exists");
-        }
+        member.setId(sequenceGenerator.getNextSequence("member"));
         return memberRepository.save(member);
     }
 
-    public Member updateMember(String id, Member memberDetails) {
+    public Member updateMember(Integer id, Member memberDetails) {
         return memberRepository.findById(id).map(member -> {
             if (memberDetails.getName() != null && !memberDetails.getName().isBlank() ) {
                 member.setName(memberDetails.getName());
@@ -65,7 +67,7 @@ public class MemberService {
     }
 
 
-    public void deleteMember(String id) {
+    public void deleteMember(Integer id) {
         if (!memberRepository.existsById(id)) {
             throw new RuntimeException("Member not found with id: " + id);
         }

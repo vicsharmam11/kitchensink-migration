@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "member")
 public class Member {
     @Id
-    private String id;
+    private Integer id;
 
     private String name;
 
@@ -23,7 +23,7 @@ public class Member {
     )
     private String phone;
 
-    public Member(String id, String name, String email, String phone) {
+    public Member(Integer id, String name, String email, String phone) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -31,11 +31,11 @@ public class Member {
     }
 
     // Getters and Setters
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -1,4 +1,4 @@
-package com.demo.kitchensink.service;
+package com.demo.kitchensink.utils;
 
 import com.demo.kitchensink.model.User;
 import com.demo.kitchensink.repository.UserRepository;

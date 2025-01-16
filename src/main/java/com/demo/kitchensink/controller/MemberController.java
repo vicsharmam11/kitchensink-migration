@@ -45,7 +45,7 @@ public class MemberController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Member> getMemberById(@PathVariable String id) {
-        Optional<Member> member=memberService.getMemberById(id);
+        Optional<Member> member=memberService.getMemberById(Integer.valueOf(id));
         if(!member.isPresent()){
             throw new CustomException("id", "Invalid Id provided");
         }
@@ -76,11 +76,11 @@ public class MemberController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Member> updateMember(@PathVariable String id, @Valid @RequestBody Member memberDetails) {
 
-            Optional<Member> member=memberService.getMemberById(id);
+            Optional<Member> member=memberService.getMemberById(Integer.valueOf(id));
             if(!member.isPresent()){
                 throw new CustomException("id","Invalid Id provided");
             }
-            Member updatedMember = memberService.updateMember(id, memberDetails);
+            Member updatedMember = memberService.updateMember(Integer.valueOf(id), memberDetails);
             if(updatedMember==null)
                 return ResponseEntity.notFound().build();
             return ResponseEntity.ok(updatedMember);
@@ -92,7 +92,7 @@ public class MemberController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMember(@PathVariable String id) {
         try {
-            memberService.deleteMember(id);
+            memberService.deleteMember(Integer.valueOf(id));
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
