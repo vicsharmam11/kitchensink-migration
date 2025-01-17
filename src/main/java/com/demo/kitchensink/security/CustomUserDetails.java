@@ -1,26 +1,38 @@
 package com.demo.kitchensink.security;
 
+import com.demo.kitchensink.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
     private String username;
     private String password;
-    private String role;
+    private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(String username, String password, String role) {
+    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.authorities = authorities;
+    }
+
+    public static CustomUserDetails build(User user) {
+        return new CustomUserDetails(
+                user.getUsername(),
+                user.getPassword(),
+                user.getRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority(role.name()))
+                        .collect(Collectors.toList())
+        );
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(role));
+        return authorities;
     }
 
     @Override
