@@ -24,9 +24,6 @@ class MemberServiceTest {
     @Mock
     MemberRepository memberRepository;
 
-    @Mock
-    SequenceGeneratorService sequenceGenerator;
-
     @InjectMocks
     MemberService memberService;
 
@@ -38,7 +35,7 @@ class MemberServiceTest {
     @Test
     void testGetUsersByName() {
         String name = "John";
-        List<Member> members = Arrays.asList(new Member(1, "John", "john@example.com", "1234567890"));
+        List<Member> members = Arrays.asList(new Member("1", "John", "john@example.com", "1234567890"));
 
         when(memberRepository.findByName(name)).thenReturn(members);
 
@@ -52,7 +49,7 @@ class MemberServiceTest {
     @Test
     void testSearchUsersByName() {
         String name = "jo";
-        List<Member> members = Arrays.asList(new Member(1, "John", "john@example.com", "1234567890"));
+        List<Member> members = Arrays.asList(new Member("1", "John", "john@example.com", "1234567890"));
 
         when(memberRepository.findByNameContainingIgnoreCase(name)).thenReturn(members);
 
@@ -66,7 +63,7 @@ class MemberServiceTest {
     @Test
     void testGetUsersByPhonePrefix() {
         String prefix = "123";
-        List<Member> members = Arrays.asList(new Member(1, "John", "john@example.com", "1234567890"));
+        List<Member> members = Arrays.asList(new Member("1", "John", "john@example.com", "1234567890"));
 
         when(memberRepository.findByPhoneStartingWith(prefix)).thenReturn(members);
 
@@ -91,7 +88,7 @@ class MemberServiceTest {
 
     @Test
     void testGetAllMembers() {
-        List<Member> members = Arrays.asList(new Member(1, "John", "john@example.com", "1234567890"));
+        List<Member> members = Arrays.asList(new Member("1", "John", "john@example.com", "1234567890"));
 
         when(memberRepository.findAll()).thenReturn(members);
 
@@ -103,8 +100,8 @@ class MemberServiceTest {
 
     @Test
     void testGetMemberById() {
-        int id = 1;
-        Member member = new Member(1, "John", "john@example.com", "1234567890");
+        String id = "1";
+        Member member = new Member("1", "John", "john@example.com", "1234567890");
 
         when(memberRepository.findById(id)).thenReturn(Optional.of(member));
 
@@ -119,20 +116,18 @@ class MemberServiceTest {
     void testCreateMember() {
         Member member = new Member(null, "John", "john@example.com", "1234567890");
 
-        when(sequenceGenerator.getNextSequence("member")).thenReturn(1);
         when(memberRepository.save(any(Member.class))).thenReturn(member);
 
         Member result = memberService.createMember(member);
 
         assertNotNull(result);
         assertEquals("John", result.getName());
-        verify(sequenceGenerator, times(1)).getNextSequence("member");
         verify(memberRepository, times(1)).save(member);
     }
 
     @Test
     void testUpdateMember() {
-        int id = 1;
+        String id = "1";
         Member existingMember = new Member(id, "John", "john@example.com", "1234567890");
         Member updatedDetails = new Member(null, "Jane", "jane@example.com", "0987654321");
 
@@ -150,7 +145,7 @@ class MemberServiceTest {
 
     @Test
     void testDeleteMember() {
-        int id = 1;
+        String id = "1";
 
         when(memberRepository.existsById(id)).thenReturn(true);
 
@@ -161,7 +156,7 @@ class MemberServiceTest {
 
     @Test
     void testDeleteMemberThrowsException() {
-        int id = 1;
+        String id = "1";
 
         when(memberRepository.existsById(id)).thenReturn(false);
 

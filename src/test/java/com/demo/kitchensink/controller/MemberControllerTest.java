@@ -46,7 +46,7 @@ class MemberControllerTest {
         MockitoAnnotations.openMocks(this);
 
         // Sample member
-        validMember=new Member(1, "John Doe", "john.doe@example.com", "7778889996" );
+        validMember=new Member("1", "John Doe", "john.doe@example.com", "7778889996" );
 
         // Sample JWT tokens
         adminJwtToken = "bearer admin-jwt-token";
@@ -75,7 +75,7 @@ class MemberControllerTest {
     @Test
     void getMemberById_shouldReturnMember_whenMemberExists() {
         // Arrange
-        when(memberService.getMemberById(1)).thenReturn(Optional.of(validMember));
+        when(memberService.getMemberById("1")).thenReturn(Optional.of(validMember));
 
         // Act
         ResponseEntity<Member> response = memberController.getMemberById("1");
@@ -83,7 +83,7 @@ class MemberControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(validMember, response.getBody());
-        verify(memberService, times(1)).getMemberById(1);
+        verify(memberService, times(1)).getMemberById("1");
     }
 
     @Test
@@ -112,14 +112,14 @@ class MemberControllerTest {
     @Test
     void deleteMember_shouldReturn204() {
         // Arrange
-        doNothing().when(memberService).deleteMember(1);
+        doNothing().when(memberService).deleteMember("1");
 
         // Act
         ResponseEntity<Void> response = memberController.deleteMember("1");
 
         // Assert
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(memberService, times(1)).deleteMember(1);
+        verify(memberService, times(1)).deleteMember("1");
     }
 
     @Test
@@ -129,14 +129,14 @@ class MemberControllerTest {
         when(jwtUtils.extractRole("admin-jwt-token")).thenReturn("ADMIN");
         when(memberService.getMemberById(any())).thenReturn(Optional.ofNullable(validMember));
 
-        when(memberService.updateMember(1, validMember)).thenReturn(validMember);
+        when(memberService.updateMember("1", validMember)).thenReturn(validMember);
 
         ResponseEntity<Member> response = memberController.updateMember("1",  validMember);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(validMember, response.getBody());
-        verify(memberService, times(1)).updateMember(1, validMember);
+        verify(memberService, times(1)).updateMember("1", validMember);
     }
 
     @Test

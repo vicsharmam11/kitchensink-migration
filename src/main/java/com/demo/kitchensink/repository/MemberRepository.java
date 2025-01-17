@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends MongoRepository<Member, Integer> {
+public interface MemberRepository extends MongoRepository<Member, String> {
     // Custom query methods (if needed) can be added here
 
     // Find all members
