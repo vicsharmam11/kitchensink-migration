@@ -1,6 +1,8 @@
 package com.demo.kitchensink.controller;
 
 
+import com.demo.kitchensink.model.User;
+import com.demo.kitchensink.repository.UserRepository;
 import com.demo.kitchensink.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,9 +11,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -20,6 +24,9 @@ class LoginControllerTest {
 
     @Mock
     private JwtUtil jwtUtils;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private LoginController loginController;
@@ -36,6 +43,13 @@ class LoginControllerTest {
         String password = "admin123";
         String role = "ADMIN";
         String jwtToken = "mocked-jwt-token";
+        User user=new User();
+        user.setUsername("admin");
+        BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
+        String encodedPass=bCryptPasswordEncoder.encode(password);
+        user.setPassword(encodedPass);
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(user));
+
 
         HashMap<String, String> credentials = new HashMap<>() {{ put("username", username); put("password", password); }};
 
@@ -53,8 +67,12 @@ class LoginControllerTest {
 
     @Test
     void login_shouldThrowException_whenCredentialsAreInvalid() {
+        User user=new User();
+        user.setUsername("admin");
+        user.setPassword("admin");
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(user));
         // Arrange
-        String username = "invalid";
+        String username = "admin";
         String password = "password";
 
         HashMap<String, String> credentials = new HashMap<>() {{ put("username", username); put("password", password); }};

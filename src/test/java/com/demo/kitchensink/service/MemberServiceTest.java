@@ -164,4 +164,27 @@ class MemberServiceTest {
         assertEquals("Member not found with id: " + id, exception.getMessage());
         verify(memberRepository, times(0)).deleteById(id);
     }
+
+    @Test
+    void createUser_shouldFail_whenEmailAlreadyExists() {
+        Member member = new Member("1","Vvk","existing@example.com","9876543210");
+
+        when(memberRepository.findByEmail("existing@example.com"))
+                .thenReturn(Optional.of(member));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> memberService.createMember(member));
+        assertEquals("Email already exists in the system: existing@example.com", exception.getMessage());
+    }
+
+    @Test
+    void createUser_shouldFail_whenPhoneAlreadyExists() {
+        Member member = new Member("1","Vvk","existing@example.com","9876543210");
+
+
+        when(memberRepository.findByPhone("9876543210"))
+                .thenReturn(Optional.of(member));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> memberService.createMember(member));
+        assertEquals("Phone number already exists in the system: 9876543210", exception.getMessage());
+    }
 }

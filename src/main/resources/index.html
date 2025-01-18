@@ -152,6 +152,30 @@
         return localStorage.getItem('jwtToken');
     }
 
+  async function tokenExpireLogout(response) {
+    try {
+        const reader = response.body.getReader();
+        let receivedText = '';
+        const decoder = new TextDecoder('utf-8');
+
+        // Read the stream chunks
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            receivedText += decoder.decode(value, { stream: true });
+        }
+
+        // Check if the response body contains "Access is denied"
+        if (receivedText.includes('Access is denied')) {
+            alert('Access is denied. Logging out.');
+            logout();
+        }
+    } catch (err) {
+        console.error('Failed to read response body:', err);
+    }
+}
+
+
     // Helper function to set headers
     function getHeaders() {
         const token = getToken();
@@ -196,6 +220,7 @@ async function getMemberById() {
             const data = await response.json();
             document.getElementById('get-member-response').innerHTML = renderTable(data);
         } else {
+            tokenExpireLogout(response);
             throw new Error('Failed to get member by ID');
         }
     } catch (error) {
@@ -214,6 +239,7 @@ async function getAllMembers() {
             const data = await response.json();
             document.getElementById('get-all-members-response').innerHTML = renderTable(data);
         } else {
+            tokenExpireLogout(response);
             throw new Error('Failed to get members');
         }
     } catch (error) {
@@ -326,6 +352,7 @@ function renderTable(data) {
         document.getElementById('logout-button').addEventListener('click', logout);
 
         checkToken();
+
 </script>
 </body>
 </html>

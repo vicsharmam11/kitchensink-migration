@@ -18,6 +18,8 @@ public interface MemberRepository extends MongoRepository<Member, String> {
     // Find members by email
     Optional<Member> findByEmail(String email);
 
+    Optional<Member> findByPhone(String phone);
+
     // Find members whose name contains a substring (case-insensitive)
     List<Member> findByNameContainingIgnoreCase(String name);
 
