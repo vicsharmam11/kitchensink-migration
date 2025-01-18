@@ -173,7 +173,7 @@ class MemberServiceTest {
                 .thenReturn(Optional.of(member));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> memberService.createMember(member));
-        assertEquals("Email already exists in the system: existing@example.com", exception.getMessage());
+        assertEquals("Email already exists", exception.getMessage());
     }
 
     @Test
@@ -185,6 +185,6 @@ class MemberServiceTest {
                 .thenReturn(Optional.of(member));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> memberService.createMember(member));
-        assertEquals("Phone number already exists in the system: 9876543210", exception.getMessage());
+        assertEquals("Phone already exists", exception.getMessage());
     }
 }

@@ -85,7 +85,7 @@ public class MemberService {
         // Check if phone exists for a different user
         Optional<Member> userWithPhone = memberRepository.findByPhone(phone);
         if (userWithPhone.isPresent() && (memberId == null || !userWithPhone.get().getId().equals(memberId))) {
-            throw new CustomException("phone", "hone already exists");
+            throw new CustomException("phone", "Phone already exists");
         }
     }
 
