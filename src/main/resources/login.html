@@ -108,7 +108,7 @@
               throw new Error(errorData.message || 'Login failed');
           }
       } catch (error) {
-          document.getElementById('login-response').textContent = error.message;
+          document.getElementById('login-response').textContent  = "Invalid credentials";
       }
   }
 </script>

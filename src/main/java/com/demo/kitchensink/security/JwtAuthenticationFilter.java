@@ -15,7 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -29,14 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        Map<String,String[]> mp=request.getParameterMap();
-        for(Map.Entry e:mp.entrySet())
-        System.out.println(e.getKey());
-        System.out.println("---------------");
         String token = getTokenFromRequest(request);
-
-
-
         if (token != null && jwtUtils.validateToken(token)) {
             Claims claims = jwtUtils.extractAllClaims(token);
             String username = claims.getSubject();
