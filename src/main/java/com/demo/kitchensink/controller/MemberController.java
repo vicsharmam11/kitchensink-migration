@@ -6,14 +6,13 @@ import com.demo.kitchensink.model.Member;
 import com.demo.kitchensink.utils.JwtUtil;
 import com.demo.kitchensink.service.MemberService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +23,7 @@ import java.util.Optional;
 @Validated
 
 public class MemberController {
+    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 
     @Autowired
     private MemberService memberService;
@@ -47,6 +47,7 @@ public class MemberController {
     public ResponseEntity<Member> getMemberById(@PathVariable String id) {
         Optional<Member> member=memberService.getMemberById(id);
         if(!member.isPresent()){
+            logger.error("Exception occurred validating Id");
             throw new CustomException("id", "Invalid Id provided");
         }
         return member.map(ResponseEntity::ok)
@@ -59,12 +60,15 @@ public class MemberController {
     public ResponseEntity<Member> createMember(@Valid @RequestBody Member member) {
 
             if (StringUtil.isNullOrEmpty(member.getName())) {
+                logger.error("Exception occurred validating name");
                 throw new CustomException("name","Name is mandatory");
             }
             if (StringUtil.isNullOrEmpty(member.getEmail())) {
+                logger.error("Exception occurred validating email");
                 throw new CustomException("email","Email is mandatory");
             }
             if (StringUtil.isNullOrEmpty(member.getPhone())) {
+                logger.error("Exception occurred validating phone");
                 throw new CustomException("phone","Phone is mandatory");
             }
             Member savedMember = memberService.createMember(member);
@@ -78,6 +82,7 @@ public class MemberController {
 
             Optional<Member> member=memberService.getMemberById(id);
             if(!member.isPresent()){
+                logger.error("Exception occurred validating Id in update");
                 throw new CustomException("id","Invalid Id provided");
             }
             Member updatedMember = memberService.updateMember(id, memberDetails);
@@ -95,6 +100,7 @@ public class MemberController {
             memberService.deleteMember(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
+            logger.error("Exception occurred while deleting : {}",e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
